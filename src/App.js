@@ -1,6 +1,7 @@
 import React from 'react';
 import TodoList from './components/TodoList/TodoList';
 import TodoFilter from './components/TodoFilter/TodoFilter';
+import classNames from 'classnames';
 
 class App extends React.Component {
   constructor(props) {
@@ -11,38 +12,44 @@ class App extends React.Component {
     this.onToggleAll = this.onToggleAll.bind(this);
 
     this.state = {
-      todos: [
-        { id: 0, title: 'aaa', completed: false },
-        { id: 1, title: 'bbb', completed: true },
-        { id: 2, title: 'ccc', completed: false },
-        { id: 3, title: 'ddd', completed: false },
-      ],
+      todos: [],
+      filter: 'All',
       toggleAll: true,
-      title: '',
+      inputValue: '',
+      nextId: 0,
     };
   }
 
   onSubmitNewTodo = (event) => {
     event.preventDefault();
-    const title = this.state.title;
-    if (title !== '') {
+    const inputValue = this.state.inputValue;
+    if (inputValue !== '') {
       this.setState((prevState) => {
-        const todo = { id: prevState.todos.length, title, completed: false };
-        const newTodos = [...prevState.todos];
-        newTodos.push(todo);
+        let id = prevState.nextId;
+        if (prevState.nextId === 0) {
+          id = prevState.todos.length;
+        }
+
+        const todo = {
+          id: id, //???
+          title: inputValue,
+          completed: false,
+        };
+
         return {
-          todos: newTodos,
+          todos: [...prevState.todos, todo],
           toggleAll: true,
-          title: '',
+          inputValue: '',
+          nextId: id + 1,
         };
       });
     }
   };
 
   onChangeInput = (event) => {
-    const title = event.target.value;
+    const inputValue = event.target.value;
     this.setState({
-      title,
+      inputValue,
     });
   };
 
@@ -77,8 +84,53 @@ class App extends React.Component {
     });
   };
 
+  onDeleteItem = (id) => {
+    this.setState((prevState) => {
+      return {
+        todos: prevState.todos.filter((todo) => todo.id !== id),
+      };
+    });
+  };
+
+  onClearCompleted = () => {
+    this.setState((prevState) => {
+      return {
+        todos: prevState.todos.filter((todo) => todo.completed === false),
+        toggleAll: true,
+      };
+    });
+  };
+
+  onFilteredTodos = (event) => {
+    const target = event.target;
+    if (target.tagName === 'A') {
+      const value = target.innerHTML;
+      this.setState((prevState) => {
+        if (prevState !== value) {
+          return {
+            filter: value,
+          };
+        }
+      });
+    }
+  };
+
+  onEnterTask = (editValue, id) => {
+    this.setState((prevState) => {
+      return {
+        todos: prevState.todos.map((todo) => {
+          if (id !== todo.id) {
+            return todo;
+          }
+
+          return { ...todo, title: editValue };
+        }),
+      };
+    });
+  };
+
   render() {
-    const { todos, title } = this.state;
+    const { todos, inputValue, filter } = this.state;
     const left = todos.filter((todo) => !todo.completed).length;
 
     return (
@@ -90,7 +142,7 @@ class App extends React.Component {
             <input
               className="new-todo"
               placeholder="What needs to be done?"
-              value={title}
+              value={inputValue}
               onChange={(event) => this.onChangeInput(event)}
             />
           </form>
@@ -106,32 +158,32 @@ class App extends React.Component {
           />
           <label htmlFor="toggle-all">Mark all as complete</label>
 
-          <TodoList onTaskToggle={this.onTaskToggle} items={todos} />
+          <TodoList
+            onTaskToggle={this.onTaskToggle}
+            onDeleteItem={this.onDeleteItem}
+            onEnterTask={this.onEnterTask}
+            items={todos}
+            filter={filter}
+          />
         </section>
 
-        <footer className="footer">
+        <footer
+          className={classNames('footer', {
+            'footer-empty': todos.length === 0,
+          })}
+        >
           <span className="todo-count">
             {left}
             {` item${left !== 1 ? 's' : ''} left`}
           </span>
 
-          <ul className="filters">
-            <li>
-              <a href="#/" className="selected">
-                All
-              </a>
-            </li>
+          <TodoFilter onFilteredTodos={this.onFilteredTodos} filter={filter} />
 
-            <li>
-              <a href="#/active">Active</a>
-            </li>
-
-            <li>
-              <a href="#/completed">Completed</a>
-            </li>
-          </ul>
-
-          <button type="button" className="clear-completed">
+          <button
+            type="button"
+            className="clear-completed"
+            onClick={() => this.onClearCompleted()}
+          >
             Clear completed
           </button>
         </footer>
