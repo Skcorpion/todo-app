@@ -71,10 +71,16 @@ class TodoItem extends React.PureComponent {
           onChange={(event) => {
             this.onTaskChange(event);
           }}
-          onKeyPress={(event) => {
+          onKeyDown={(event) => {
+            console.log(event.key);
             if (event.key === 'Enter') {
               this.setState({ editing: false });
               onEnterTask(editValue, id);
+            } else if (event.key === 'Escape') {
+              this.setState({
+                editing: false,
+                editValue: title,
+              });
             }
           }}
         />

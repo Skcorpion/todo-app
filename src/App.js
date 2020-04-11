@@ -12,7 +12,12 @@ class App extends React.Component {
     this.onToggleAll = this.onToggleAll.bind(this);
 
     this.state = {
-      todos: [],
+      todos: [
+        { id: 0, title: 'aaa', completed: false },
+        { id: 1, title: 'bbb', completed: true },
+        { id: 2, title: 'ccc', completed: false },
+        { id: 3, title: 'ddd', completed: false },
+      ],
       filter: 'All',
       toggleAll: true,
       inputValue: '',
