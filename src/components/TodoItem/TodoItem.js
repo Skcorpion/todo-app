@@ -21,6 +21,21 @@ class TodoItem extends React.PureComponent {
     });
   };
 
+  componentDidMount() {
+    document.addEventListener('click', (event) => {
+      const { editing, editValue } = this.state;
+      const {
+        item: { title, id },
+        onEnterTask,
+      } = this.props;
+
+      if (editing && event.target.value !== title) {
+        this.setState({ editing: false });
+        onEnterTask(editValue, id);
+      }
+    });
+  }
+
   componentDidUpdate() {
     console.log('componentDidUpdate', this.props.item.id);
     this.textInput.current.focus();
