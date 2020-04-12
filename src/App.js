@@ -12,17 +12,31 @@ class App extends React.Component {
     this.onToggleAll = this.onToggleAll.bind(this);
 
     this.state = {
-      todos: [
-        { id: 0, title: 'aaa', completed: false },
-        { id: 1, title: 'bbb', completed: true },
-        { id: 2, title: 'ccc', completed: false },
-        { id: 3, title: 'ddd', completed: false },
-      ],
+      todos: [],
       filter: 'All',
       toggleAll: true,
       inputValue: '',
       nextId: 0,
+      dataChange: false,
     };
+  }
+
+  componentDidMount() {
+    const localTodos = localStorage.getItem('todos');
+    if (localTodos)
+      this.setState({
+        todos: JSON.parse(localTodos),
+      });
+  }
+
+  componentDidUpdate() {
+    if (this.state.dataChange) {
+      localStorage.setItem('todos', JSON.stringify(this.state.todos));
+
+      this.setState({
+        dataChange: false,
+      });
+    }
   }
 
   onSubmitNewTodo = (event) => {
@@ -36,7 +50,7 @@ class App extends React.Component {
         }
 
         const todo = {
-          id: id, //???
+          id: id,
           title: inputValue,
           completed: false,
         };
@@ -46,6 +60,7 @@ class App extends React.Component {
           toggleAll: true,
           inputValue: '',
           nextId: id + 1,
+          dataChange: true,
         };
       });
     }
@@ -71,6 +86,7 @@ class App extends React.Component {
           return { ...todo, completed: !todo.completed };
         }),
         toggleAll: true,
+        dataChange: true,
       };
     });
   };
@@ -85,6 +101,7 @@ class App extends React.Component {
           return { ...todo, completed: prevState.toggleAll };
         }),
         toggleAll: !prevState.toggleAll,
+        dataChange: true,
       };
     });
   };
@@ -93,6 +110,7 @@ class App extends React.Component {
     this.setState((prevState) => {
       return {
         todos: prevState.todos.filter((todo) => todo.id !== id),
+        dataChange: true,
       };
     });
   };
@@ -102,6 +120,7 @@ class App extends React.Component {
       return {
         todos: prevState.todos.filter((todo) => todo.completed === false),
         toggleAll: true,
+        dataChange: true,
       };
     });
   };
@@ -130,6 +149,7 @@ class App extends React.Component {
 
           return { ...todo, title: editValue };
         }),
+        dataChange: true,
       };
     });
   };

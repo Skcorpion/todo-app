@@ -1,6 +1,7 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import './TodoItem.css';
 
 class TodoItem extends React.PureComponent {
   constructor(props) {
@@ -37,7 +38,6 @@ class TodoItem extends React.PureComponent {
   }
 
   componentDidUpdate() {
-    console.log('componentDidUpdate', this.props.item.id);
     this.textInput.current.focus();
   }
 
@@ -87,7 +87,6 @@ class TodoItem extends React.PureComponent {
             this.onTaskChange(event);
           }}
           onKeyDown={(event) => {
-            console.log(event.key);
             if (event.key === 'Enter') {
               this.setState({ editing: false });
               onEnterTask(editValue, id);
@@ -103,5 +102,16 @@ class TodoItem extends React.PureComponent {
     );
   }
 }
+
+TodoItem.propTypes = {
+  item: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    completed: PropTypes.bool.isRequired,
+  }).isRequired,
+  onTaskToggle: PropTypes.func.isRequired,
+  onDeleteItem: PropTypes.func.isRequired,
+  onEnterTask: PropTypes.func.isRequired,
+};
 
 export default TodoItem;

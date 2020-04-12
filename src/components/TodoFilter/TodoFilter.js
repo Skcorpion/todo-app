@@ -1,6 +1,7 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import './TodoFilter.css';
 
 class TodoFilter extends React.Component {
   render() {
@@ -34,5 +35,10 @@ class TodoFilter extends React.Component {
     );
   }
 }
+
+TodoFilter.propTypes = {
+  onFilteredTodos: PropTypes.func.isRequired,
+  filter: PropTypes.string.isRequired,
+};
 
 export default TodoFilter;
