@@ -23,15 +23,22 @@ class App extends React.Component {
 
   componentDidMount() {
     const localTodos = localStorage.getItem('todos');
-    if (localTodos)
+    const nextId = localStorage.getItem('nextId');
+    if (localTodos) {
       this.setState({
         todos: JSON.parse(localTodos),
       });
+    }
+
+    if (nextId) {
+      this.setState({ nextId: +nextId });
+    }
   }
 
   componentDidUpdate() {
     if (this.state.dataChange) {
       localStorage.setItem('todos', JSON.stringify(this.state.todos));
+      localStorage.setItem('nextId', this.state.nextId);
 
       this.setState({
         dataChange: false,
@@ -74,7 +81,6 @@ class App extends React.Component {
   };
 
   onTaskToggle = (event) => {
-    console.log(event.target.id);
     const id = event.target.id;
 
     this.setState((prevState) => {
