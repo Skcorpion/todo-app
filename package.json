@@ -1,6 +1,6 @@
 {
-  "homepage": "http://skcorpion.github.io/first-app",
-  "name": "first-app",
+  "homepage": "http://skcorpion.github.io/todo-app",
+  "name": "todo-app",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
