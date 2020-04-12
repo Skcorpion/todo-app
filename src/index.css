@@ -73,6 +73,7 @@ body {
 }
 
 .todoapp h1 {
+  cursor: default;
   position: absolute;
   top: -155px;
   width: 100%;
